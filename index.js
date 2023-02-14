@@ -37,7 +37,33 @@ import _ from 'lodash'
 const source = $t.source(1)
 $t.answer(1, async () => {
   // Your code goes here
-  return 
+  let incomeArr= source.filter(el=> el.type === 'income')
+  let expensesArr= source.filter(el=> el.type === 'expense')
+  let restaurants= source.filter(el=> el.category === 'Restaurants')
+  let groceries= source.filter(el=> el.category === 'Groceries')
+  let rent= source.filter(el=> el.category === 'Rent')
+
+
+
+  let income= _.sumBy(incomeArr, 'amount')
+  let expenses= _.sumBy(expensesArr, 'amount')
+  let Resexpenses= _.sumBy(restaurants, 'amount')
+
+
+  const targetData={
+    balance: income - expenses,
+    income: income,
+    expenses: expenses,
+    byCategories:{
+      Restaurants: -Resexpenses,
+      Income: income,
+      Groceries: - parseInt(groceries.map(el=> el.amount),10),
+      Rent: - parseInt(rent.map(el=> el.amount),10)
+    }
+  }
+
+  
+  return targetData
 })
 
 /*
@@ -51,7 +77,13 @@ const $source = $t.source(2)
 $t.answer(2, async () => {
     // Your code goes here:
     // 1. Get ids: $source.getIds()
+    // const ids= source.getIds()
+    const ids= await $source.getIds()
+    
     // 2. Get text for every id: $source.getText(id)
+    const texts= ids.map(async(el)=> await $source.getText(el))
+    const text = Promise.all(texts)
+    // console.log(await text)
     // 3. Return array of texts
-    return 
+    return await text
 })
